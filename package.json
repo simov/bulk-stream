@@ -1,0 +1,48 @@
+{
+  "name": "bulk-stream",
+  "version": "0.1.0",
+  "description": "A stream that emits multiple other streams and chunks one after another",
+
+  "keywords": [
+    "stream",
+    "chunk",
+    "combine",
+    "join",
+    "concat",
+    "multiple",
+    "append"
+  ],
+
+  "license": "MIT",
+  "homepage": "https://github.com/simov/bulk-stream",
+
+  "author": "Simeon Velichkov <simeonvelichkov@gmail.com> (http://simov.github.io)",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simov/bulk-stream.git"
+  },
+
+  "dependencies": {
+    "isstream"        : "0.1.2"
+  },
+
+  "devDependencies": {
+    "mocha"           : "2.x.x",
+    "should"          : "7.x.x",
+    "bl"              : "1.x.x"
+  },
+
+  "main": "index.js",
+
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.js"
+  ],
+
+  "scripts": {
+    "test"      : "npm run test-ci",
+    "test-ci"   : "mocha"
+  }
+}
