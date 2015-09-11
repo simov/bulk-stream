@@ -12,47 +12,49 @@ function BulkStream () {
 
   var self = this
   self._items = []
-
-  process.nextTick(function () {
-    self.start()
-  })
+  self._streams = []
+  self._index = 0
 }
 
 BulkStream.prototype.append = function (item) {
+  var self = this
   if (isstream(item)) {
     item.pause()
+    self._streams.push(item)
   }
-  this._items.push(item)
+  self._items.push(item)
 }
 
-BulkStream.prototype.start = function () {
+BulkStream.prototype._read = function (n) {
   var self = this
 
-  var read = function (index) {
-    if (index === self._items.length) {
-      process.nextTick(function () {
-        self.push(null)
-      })
-      return
-    }
-
-    var item = self._items[index]
-    if (isstream(item)) {
-      item.on('data', function (chunk) {
-        self.push(chunk)
-      })
-      item.on('end', function () {
-        read(++index)
-      })
-      item.resume()
-    }
-    else {
-      self.push(item)
-      read(++index)
-    }
+  if (self._index === self._items.length) {
+    // process.nextTick(function () {
+    //   self.push(null)
+    // })
+    return
   }
 
-  read(0)
-}
+  var item = self._items[self._index]
+  if (item._reading) {
+    return
+  }
 
-BulkStream.prototype._read = function (n) {}
+  if (isstream(item)) {
+    item._reading = true
+    item.on('readable', function () {
+      var chunk = item.read()
+      if (chunk === null) {
+        self._index++
+        self._read()
+      }
+      else {
+        self.push(chunk)
+      }
+    })
+  }
+  else {
+    self._index++
+    self.push(item)
+  }
+}
