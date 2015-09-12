@@ -29,9 +29,7 @@ BulkStream.prototype._read = function (n) {
   var self = this
 
   if (self._index === self._items.length) {
-    // process.nextTick(function () {
-    //   self.push(null)
-    // })
+    self.push(null)
     return
   }
 
