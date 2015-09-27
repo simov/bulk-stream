@@ -1,7 +1,7 @@
 
 # bulk-stream
 
-A [combined-stream][combined-stream] like module for Streams2:
+A [combined-stream][combined-stream] like module using Streams2:
 
 ```js
 var BulkStream = require('bulk-stream')
