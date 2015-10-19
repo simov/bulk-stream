@@ -19,12 +19,31 @@ function BulkStream () {
 BulkStream.prototype.append = function (item) {
   var self = this
   if (isstream(item)) {
+    self.initStream(item)
     self._streams.push(item)
   }
   self._items.push(item)
 }
 
-BulkStream.prototype._read = function (n) {
+BulkStream.prototype.initStream = function (stream) {
+  var self = this
+
+  stream.isReadable = false
+  stream.isActive = false
+
+  stream.on('readable', function () {
+    stream.isReadable = true
+    if (stream.isActive) {
+      self._read()
+    }
+  })
+  stream.on('end', function () {
+    stream.isReadable = true
+    self._read()
+  })
+}
+
+BulkStream.prototype._read = function () {
   var self = this
 
   if (self._index === self._items.length) {
@@ -33,13 +52,11 @@ BulkStream.prototype._read = function (n) {
   }
 
   var item = self._items[self._index]
-  if (item._reading) {
-    return
-  }
 
   if (isstream(item)) {
-    item._reading = true
-    item.on('readable', function () {
+    item.isActive = true
+    if (item.isReadable) {
+      item.isReadable = false
       var chunk = item.read()
       if (chunk === null) {
         self._index++
@@ -48,7 +65,7 @@ BulkStream.prototype._read = function (n) {
       else {
         self.push(chunk)
       }
-    })
+    }
   }
   else {
     self._index++
