@@ -19,7 +19,6 @@ function BulkStream () {
 BulkStream.prototype.append = function (item) {
   var self = this
   if (isstream(item)) {
-    item.pause()
     self._streams.push(item)
   }
   self._items.push(item)
