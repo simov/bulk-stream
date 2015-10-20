@@ -18,14 +18,15 @@ function BulkStream () {
 
 BulkStream.prototype.append = function (item) {
   var self = this
+
   if (isstream(item)) {
-    self.initStream(item)
+    self._initStream(item)
     self._streams.push(item)
   }
   self._items.push(item)
 }
 
-BulkStream.prototype.initStream = function (stream) {
+BulkStream.prototype._initStream = function (stream) {
   var self = this
 
   stream.isReadable = false
