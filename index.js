@@ -12,7 +12,6 @@ function BulkStream () {
 
   var self = this
   self._items = []
-  self._streams = []
   self._index = 0
 }
 
@@ -21,7 +20,6 @@ BulkStream.prototype.append = function (item) {
 
   if (isstream(item)) {
     self._initStream(item)
-    self._streams.push(item)
   }
   self._items.push(item)
 }

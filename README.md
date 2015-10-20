@@ -19,8 +19,6 @@ You can access the appended items through:
 ```js
 // array containing all appended items (including streams)
 bs._items
-// array containing only the appended streams
-bs._streams
 ```
 
 
