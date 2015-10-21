@@ -8,7 +8,8 @@ var BulkStream = require('../')
 var image0 = path.resolve(__dirname, 'fixtures/cat0.png')
   , image1 = path.resolve(__dirname, 'fixtures/cat1.png')
   , image2 = path.resolve(__dirname, 'fixtures/cat2.png')
-var tmp = path.resolve(__dirname, 'tmp/cat.png')
+var tmp0 = path.resolve(__dirname, 'tmp/cat0.png')
+  , tmp1 = path.resolve(__dirname, 'tmp/cat1.png')
 
 
 describe('strings + stream', function () {
@@ -37,8 +38,8 @@ describe('strings + stream', function () {
       data.should.match(/PNG/)
       data.should.match(/poop/)
 
-      fs.writeFileSync(tmp, buffer.slice())
-      var stats = fs.statSync(tmp)
+      fs.writeFileSync(tmp0, buffer.slice())
+      var stats = fs.statSync(tmp0)
       stats.size.should.equal(22025)
       done()
     })
