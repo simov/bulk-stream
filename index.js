@@ -44,18 +44,29 @@ BulkStream.prototype._initStream = function (stream) {
   })
 }
 
+BulkStream.prototype._onPipesDrain = function () {
+  var self = this
+
+  if (self._readableState.pipesCount > 0) {
+    var pipes = self._readableState.pipesCount > 1
+      ? self._readableState.pipes
+      : [self._readableState.pipes]
+
+    pipes.forEach(function (pipe) {
+      pipe.on('drain', function () {
+        self._isPaused = false
+        self._read()
+      })
+    })
+  }
+}
+
 BulkStream.prototype._read = function () {
   var self = this
 
   if (!self._isReading) {
-    // test multiple pipes
-    // test no pipes
-    // self._readableState.pipesCount
     self._isReading = true
-    self._readableState.pipes.on('drain', function () {
-      self._isPaused = false
-      self._read()
-    })
+    self._onPipesDrain()
   }
 
   if (self._isPaused) {
