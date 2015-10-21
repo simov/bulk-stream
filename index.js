@@ -13,6 +13,8 @@ function BulkStream () {
   var self = this
   self._items = []
   self._index = 0
+  self._isPaused = false
+  self._isReading = false
 }
 
 BulkStream.prototype.append = function (item) {
@@ -45,8 +47,25 @@ BulkStream.prototype._initStream = function (stream) {
 BulkStream.prototype._read = function () {
   var self = this
 
+  if (!self._isReading) {
+    // test multiple pipes
+    // test no pipes
+    // self._readableState.pipesCount
+    self._isReading = true
+    self._readableState.pipes.on('drain', function () {
+      self._isPaused = false
+      self._read()
+    })
+  }
+
+  if (self._isPaused) {
+    return
+  }
+
   if (self._index === self._items.length) {
-    self.push(null)
+    process.nextTick(function () {
+      self.push(null)
+    })
     return
   }
 
@@ -62,12 +81,18 @@ BulkStream.prototype._read = function () {
         self._read()
       }
       else {
-        self.push(chunk)
+        var result = self.push(chunk)
+        if (!result) {
+          self._isPaused = true
+        }
       }
     }
   }
   else {
     self._index++
-    self.push(item)
+    var result = self.push(item)
+    if (!result) {
+      self._isPaused = true
+    }
   }
 }
